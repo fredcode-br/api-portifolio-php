@@ -29,6 +29,7 @@ abstract class ConstantesGenericasUtil
     public const MSG_ERRO_ID_OBRIGATORIO = 'ID é obrigatório!';
     public const MSG_ERRO_TAG_OBRIGATORIA = 'Tag é obrigatória!';
     public const MSG_ERRO_TAG_NOME_OBRIGATORIO = 'Tag e nome são obrigatórios!';
+    public const MSG_ERRO_NOME_TAGS_OBRIGATORIO = 'Tags e nome são obrigatórios!';
     public const MSG_ERRO_TAG_ARRAY = 'O campo tag deve ser preenchio com um array de strings!';
     public const MSG_ERRO_NOME_OBRIGATORIO = 'O nome é obrigatório!';
 

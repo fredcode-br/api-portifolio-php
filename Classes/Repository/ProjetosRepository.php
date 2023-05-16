@@ -82,13 +82,19 @@
             return $stmt->rowCount();
         }
 
-        public function updateUser($id, $dados){
-            $consultaUpdate = 'UPDATE '. self::TABELA . ' SET login = :login, senha = :senha WHERE id = :id';
+        public function updateProject($id, $dados){
+            $consultaUpdate = 'UPDATE '. self::TABELA . ' SET 
+            nome = :nome, imagemUrl = :imagem, projetoUrl = :projeto, 
+            githubUrl = :github, descricao = :descricao, visualizacoes = :visualizacoes WHERE id = :id';
             $this->MySQL->getDb()->beginTransaction();
             $stmt = $this->MySQL->getDb()->prepare($consultaUpdate);
             $stmt->bindParam(':id', $id);
-            $stmt->bindParam(':login', $dados['login']);
-            $stmt->bindParam(':senha', $dados['senha']);
+            $stmt->bindParam(':nome', $dados['nome']);
+            $stmt->bindParam(':imagem', $dados['imagemUrl']);
+            $stmt->bindParam(':projeto', $dados['projetoUrl']);
+            $stmt->bindParam(':github', $dados['githubUrl']);
+            $stmt->bindParam(':descricao', $dados['descricao']);
+            $stmt->bindParam(':visualizacoes', $dados['visualizacoes']);
             $stmt->execute();
             return $stmt->rowCount();
         }

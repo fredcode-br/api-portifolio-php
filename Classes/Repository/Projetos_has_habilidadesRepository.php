@@ -25,6 +25,18 @@
             return $stmt->rowCount();
         }
 
+        public function verificarTag($id, $tag){
+            $consulta = 'SELECT * FROM '. self::TABELA . ' WHERE projetos_id = :id AND habilidades_tag = :tag';
+            //$consulta = "SELECT * FROM projetos_has_habilidades WHERE projetos_id = 1 AND habilidades_tag = 'html'";
+            $stmt = $this->MySQL->getDb()->prepare($consulta);
+            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':tag', $tag);
+            $stmt->execute();
+            return $stmt->rowCount();
+        }
+
+        
+
         public function updateSkillinProject($id, $tag){
            
         }

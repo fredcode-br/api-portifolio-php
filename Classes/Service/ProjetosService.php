@@ -41,7 +41,7 @@
 
         private function getOneByKey(){
             $dados = $this->ProjetosRepository->getOneByKey($this->dados['key']);
-            $tags  = explode(',', $dados['tags'], 2);
+            $tags  = explode(',', $dados['tags']);
             $dados['tags'] = $tags;  
             return $dados; 
         }
@@ -107,59 +107,73 @@
         }
 
         private function cadastrar(){
-            if($this->dadosCorpoRequest['nome']){
-                if (!array_key_exists("imagemUrl", $this->dadosCorpoRequest)){
-                    $this->dadosCorpoRequest['imagemUrl'] = 'www.url/imagedefault';
-                }
-                if (!array_key_exists("projetoUrl", $this->dadosCorpoRequest)){
-                    $this->dadosCorpoRequest['projetoUrl'] = '';
-                }
-                if (!array_key_exists("githubUrl", $this->dadosCorpoRequest)){
-                    $this->dadosCorpoRequest['githubUrl'] = '';
-                }
-                if (!array_key_exists("descricao", $this->dadosCorpoRequest)){
-                    $this->dadosCorpoRequest['descricao'] = '';
-                }
-                if (!array_key_exists("visualizacoes", $this->dadosCorpoRequest)){
-                    $this->dadosCorpoRequest['visualizacoes'] = 0;
+            if($this->dadosCorpoRequest['nome'] && $this->dadosCorpoRequest['tags']){
+                if(is_array($this->dadosCorpoRequest['tags']) && count($this->dadosCorpoRequest['tags']) > 0){
+                    if (!array_key_exists("imagemUrl", $this->dadosCorpoRequest)){
+                        $this->dadosCorpoRequest['imagemUrl'] = 'www.url/imagedefault';
+                    }
+                    if (!array_key_exists("projetoUrl", $this->dadosCorpoRequest)){
+                        $this->dadosCorpoRequest['projetoUrl'] = '';
+                    }
+                    if (!array_key_exists("githubUrl", $this->dadosCorpoRequest)){
+                        $this->dadosCorpoRequest['githubUrl'] = '';
+                    }
+                    if (!array_key_exists("descricao", $this->dadosCorpoRequest)){
+                        $this->dadosCorpoRequest['descricao'] = '';
+                    }
+                    if (!array_key_exists("visualizacoes", $this->dadosCorpoRequest)){
+                        $this->dadosCorpoRequest['visualizacoes'] = 0;
+                    }
+                }else{
+                    throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_TAG_ARRAY);
                 }
 
                 if($this->ProjetosRepository->insertProject($this->dadosCorpoRequest) > 0){
                     $idInserido = $this->ProjetosRepository->getMySQL()->getDb()->lastInsertId();
                     $this->ProjetosRepository->getMySQL()->getDb()->commit();
+                    foreach ($this->dadosCorpoRequest['tags'] as $tag) {
+                        if($this->Projetos_has_habilidadesRepository->insertSkillinProject($idInserido, $tag) > 0){
+                            $this->Projetos_has_habilidadesRepository->getMySQL()->getDb()->commit();
+                        }else{
+                            $this->Projetos_has_habilidadesRepository->getMySQL()->getDb()->rollBack();
+                            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_GENERICO);
+                        }  
+                    }
+
+                    return ['id_inserido' => $idInserido];
                 }else{
                     $this->ProjetosRepository->getMySQL()->getDb()->rollBack();
                     throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_GENERICO);
                 }
-
-                if (array_key_exists("tags", $this->dadosCorpoRequest)){
-                    if(is_array($this->dadosCorpoRequest['tags'])){
-                        foreach ($this->dadosCorpoRequest['tags'] as $tag) {
-                            if($this->Projetos_has_habilidadesRepository->insertSkillinProject($idInserido, $tag) > 0){
-                                $this->Projetos_has_habilidadesRepository->getMySQL()->getDb()->commit();
-                            }else{
-                                $this->Projetos_has_habilidadesRepository->getMySQL()->getDb()->rollBack();
-                                throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_GENERICO);
-                            }  
-                        }    
-                    return ['id_inserido' => $idInserido];
-                    }else{
-                        throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_TAG_ARRAY);
-                    }
-                }
-                return ['id_inserido' => $idInserido];
             }
-            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NOME_OBRIGATORIO);
+            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NOME_TAGS_OBRIGATORIO);
         }
 
         private function atualizar(){
-            if($this->ProjetosRepository->updateUser($this->dados['id'], $this->dadosCorpoRequest) > 0){
-                $this->ProjetosRepository->getMySQL()->getDb()->commit();
-                return ConstantesGenericasUtil::MSG_ATUALIZADO_SUCESSO;
-            }
+            if($this->dadosCorpoRequest['nome'] && $this->dadosCorpoRequest['tags']){
+                if(is_array($this->dadosCorpoRequest['tags']) && count($this->dadosCorpoRequest['tags']) > 0){
+                    if($this->ProjetosRepository->updateProject($this->dados['key'], $this->dadosCorpoRequest) > 0){
+                        $this->ProjetosRepository->getMySQL()->getDb()->commit();
+                        foreach ($this->dadosCorpoRequest['tags'] as $tag) {
+                            if(!($this->Projetos_has_habilidadesRepository->verificarTag($this->dados['key'], $tag) > 0)){
+                                if($this->Projetos_has_habilidadesRepository->insertSkillinProject($this->dados['key'], $tag) > 0){
+                                    $this->Projetos_has_habilidadesRepository->getMySQL()->getDb()->commit();
+                                }else{
+                                    $this->Projetos_has_habilidadesRepository->getMySQL()->getDb()->rollBack();
+                                    throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_GENERICO);
+                                }
+                            }  
+                        }
 
-            $this->ProjetosRepository->getMySQL()->getDb()->rollBack();
-            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
+                        return ConstantesGenericasUtil::MSG_ATUALIZADO_SUCESSO;
+                    }else{
+                        $this->ProjetosRepository->getMySQL()->getDb()->rollBack();
+                        throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
+                    }
+                }
+            }else{
+                throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_TAG_ARRAY);
+            }
         }
 
         private function validarRetornoRequest($retorno){
@@ -169,7 +183,7 @@
         }
 
         private function validarIdObrigatorio($recurso){
-            if($this->dados['id'] > 0){
+            if($this->dados['key'] > 0){
                 $retorno = $this->$recurso();
             }else{
                 throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_ID_OBRIGATORIO);
