@@ -12,7 +12,7 @@ CREATE TABLE `tokens_autorizados` (
 CREATE TABLE IF NOT EXISTS `habilidades` (
   `tag` VARCHAR(8) NOT NULL,
   `nome` VARCHAR(45) NOT NULL,
-  `porcentagem` INT NULL,
+  `porcentagem` INT NULL DEFAULT 0,
   `cor` VARCHAR(8) NULL,
   `icone` VARCHAR(25) NULL,
   PRIMARY KEY (`tag`));
@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS `projetos_has_habilidades` (
   CONSTRAINT `fk_projetos_has_habilidades_projetos`
     FOREIGN KEY (`projetos_id`)
     REFERENCES `projetos` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_projetos_has_habilidades_habilidades1`
     FOREIGN KEY (`habilidades_tag`)
     REFERENCES `habilidades` (`tag`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);

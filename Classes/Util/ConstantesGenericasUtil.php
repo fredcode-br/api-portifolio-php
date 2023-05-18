@@ -22,6 +22,7 @@ abstract class ConstantesGenericasUtil
     public const MSG_ERR0_JSON_VAZIO = 'O Corpo da requisição não pode ser vazio!';
 
     /* SUCESSO */
+    public const MSG_INSERIDO_SUCESSO = 'Registro inserido com Sucesso!';
     public const MSG_DELETADO_SUCESSO = 'Registro deletado com Sucesso!';
     public const MSG_ATUALIZADO_SUCESSO = 'Registro atualizado com Sucesso!';
 
@@ -30,6 +31,7 @@ abstract class ConstantesGenericasUtil
     public const MSG_ERRO_TAG_OBRIGATORIA = 'Tag é obrigatória!';
     public const MSG_ERRO_TAG_NOME_OBRIGATORIO = 'Tag e nome são obrigatórios!';
     public const MSG_ERRO_NOME_TAGS_OBRIGATORIO = 'Tags e nome são obrigatórios!';
+    public const MSG_ERRO_PREENCHA_TODOS_CAMPOS = 'Preencha todos os campos!';
     public const MSG_ERRO_TAG_ARRAY = 'O campo tag deve ser preenchio com um array de strings!';
     public const MSG_ERRO_NOME_OBRIGATORIO = 'O nome é obrigatório!';
 

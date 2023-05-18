@@ -3,7 +3,7 @@ INSERT INTO tokens_autorizados (token, status) VALUES('6460da44cc394', 'S');
 INSERT INTO habilidades (tag, nome, porcentagem, cor, icone) VALUES ('html', 'HTML', '70', '#AAAAAA', 'html.svg');
 INSERT INTO habilidades (tag, nome, porcentagem, cor, icone) VALUES ('css', 'CSS', '60', '#BBBBBB', 'css.svg');
 INSERT INTO habilidades (tag, nome, porcentagem, cor, icone) VALUES ('php', 'PHP', '70', '#CCCCCC', 'php.svg');
-
+INSERT INTO habilidades (tag, nome, porcentagem, cor, icone) VALUES ('js', 'JavaScript', '70', '#DDDDDD', 'js.svg');
 
 INSERT INTO projetos (nome, imagemUrl, projetoUrl, githubUrl, descricao, visualizacoes) 
 VALUES ('Projeto 1', 'www.imagem.teste', 'www.projeto.teste', 'www.github.teste', 'Descrição do projeto 1', '0');
@@ -17,8 +17,11 @@ VALUES ('Projeto 4', 'www.imagem.teste', 'www.projeto.teste', 'www.github.teste'
 INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (1, 'html');
 INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (1, 'css');
 INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (1, 'php');
-INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (3, 'php');
+INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (2, 'php');
+INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (2, 'js');
 INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (3, 'html');
+INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (4, 'php');
+INSERT INTO projetos_has_habilidades (projetos_id, habilidades_tag) VALUES (4, 'html');
  
 SELECT * FROM tokens_autorizados;
 SELECT * FROM habilidades;
