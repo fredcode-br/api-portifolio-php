@@ -93,7 +93,12 @@
         }
 
         private function listar(){
-            $dados = $this->ProjetosRepository->getAll();
+            if($this->dados['sort']){
+                $dados = $this->ProjetosRepository->getByTag($this->dados['sort'][1]);
+            }else{
+                $dados = $this->ProjetosRepository->getAll();
+            }
+            
             for($i=0; $i < count($dados); $i++){
                 $tags = explode(',', $dados[$i]['tags']);
                 $dados[$i]['tags'] = $tags;

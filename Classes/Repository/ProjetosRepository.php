@@ -23,7 +23,7 @@
                 FROM ' . self::TABELA . ' AS P
                 INNER JOIN ' . self::TABELA_TAD_ID . ' AS PH  ON P.id = PH.projetos_id
                 INNER JOIN projetos_has_habilidades ON PH.projetos_id = PH.projetos_id 
-                GROUP BY  P.id';
+                GROUP BY  P.id ORDER BY P.visualizacoes DESC;';
         
             $stmt = $this->MySQL->getDb()->query($consulta);
             $registros = $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
@@ -33,27 +33,34 @@
             
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
         }
-
       
 
         public function getOneByKey($id){    
             if ($id) {
+
+                $updateVisualizacoes = 'UPDATE ' . self::TABELA . ' SET visualizacoes = visualizacoes + 1 WHERE id = :id';
+                $stmt = $this->MySQL->getDb()->prepare($updateVisualizacoes);
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
+
                 $consulta = 'SELECT P.id, P.nome, P.imagemUrl, 
                 P.projetoUrl, P.githubUrl, P.descricao, P.visualizacoes, 
                 GROUP_CONCAT(DISTINCT PH.habilidades_tag ) AS tags
                 FROM ' . self::TABELA . ' AS P
                 INNER JOIN ' . self::TABELA_TAD_ID . ' AS PH  ON P.id = PH.projetos_id
-                INNER JOIN projetos_has_habilidades ON PH.projetos_id = PH.projetos_id
                 WHERE P.id = :id
                 GROUP BY  P.id';
                 
-                $stmt = $this->MySQL->getDb()->prepare($consulta);
-                $stmt->bindParam(':id', $id);
-                $stmt->execute();
+                
+                $stmt2 = $this->MySQL->getDb()->prepare($consulta);
+                $stmt2->bindParam(':id', $id);
+                $stmt2->execute();
+
+                
 
                 $totalRegistros = $stmt->rowCount();
                 if ($totalRegistros === 1) {
-                    return $stmt->fetch($this->MySQL->getDb()::FETCH_ASSOC);
+                    return $stmt2->fetch($this->MySQL->getDb()::FETCH_ASSOC);
                 }
                 throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
             }
@@ -61,9 +68,25 @@
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_ID_OBRIGATORIO);
         }
 
+        public function getByTag($tag){
+            $consulta = 'SELECT P.id, P.nome, P.imagemUrl, 
+                P.projetoUrl, P.githubUrl, P.descricao, P.visualizacoes, 
+                GROUP_CONCAT(DISTINCT PH.habilidades_tag ) AS tags
+                FROM ' . self::TABELA . ' AS P
+                INNER JOIN ' . self::TABELA_TAD_ID . ' AS PH  ON P.id = PH.projetos_id 
+                WHERE PH.habilidades_tag = :tag  
+                GROUP BY P.id ORDER BY P.visualizacoes DESC';
 
-
-
+            $stmt = $this->MySQL->getDb()->prepare($consulta);
+            $stmt->bindParam(':tag', $tag);
+            $stmt->execute();
+            $registros = $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
+            if (is_array($registros) && count($registros) > 0) {
+                return $registros;
+            }
+            
+            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
+        }
 
 
         public function insertProject($dados){
