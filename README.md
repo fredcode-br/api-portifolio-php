@@ -15,10 +15,12 @@ API developed to be used in the [React Portifolio](https://github.com/frederico-
 </table>
 
 ## How to use this project:
-1 - Run the database creation script
-2 - Run the insert script against the database
-3 - Start apache server
-4 - Change database settings in bootstrap.php
+1) Run the database creation script
+2) Run the insert script against the database
+3) Start apache server
+4) Change database settings in bootstrap.php
+
 
 ## Project image
-![project](https://user-images.githubusercontent.com/123844821/236909615-498921ef-2916-41dd-95e0-772a6229ae64.png)
+![project](https://github.com/frederico-rufino/api-portifolio-php/assets/123844821/6f01afb4-343d-460c-96d0-3a7bfe947d58)
+
